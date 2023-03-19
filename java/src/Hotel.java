@@ -487,11 +487,12 @@ public class Hotel {
             String roomPrice = roomPriceResult.get(0).get(0);
 
             // Insert the booking into the RoomBookings table
-            String insertBookingQuery = String.format("INSERT INTO RoomBookings (hotelID, roomNo, customer, bookingDate, roomPrice) VALUES ('%s', '%s', 'CUSTOMER_ID', '%s', '%s')", hotelID, roomNumber, bookingDate, roomPrice);
+            // Here can use a trigger to update the RoomBookings table
+            String insertBookingQuery = String.format("INSERT INTO RoomBookings (customerID, hotelID, roomNumber, bookingDate) VALUES ('CUSTOMER_ID', '%s', '%s', '%s')", /* get customerID */ , hotelID, roomNumber, bookingDate);
             esql.executeUpdate(insertBookingQuery);
 
             // Display the room price to the customer
-            System.out.println("Booking successful! Room price: $" + roomPrice);
+            System.out.println("Booking successfully! Room price: $" + roomPrice);
          } else {
             // Room is not available, display a message
             System.out.println("The room is not available on the selected date.");
