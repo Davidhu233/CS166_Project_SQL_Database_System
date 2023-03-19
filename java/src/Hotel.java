@@ -447,12 +447,7 @@ public class Hotel {
 
          // Define the SQL query to select rooms with their price and availability on the given date
          // Use CASE WHEN to check if the room is available on the given date, it works like an if eles statement
-         String query = "SELECT R.roomNumber, R.price, " +
-                 "(CASE WHEN B.bookingID IS NULL THEN 'Available' ELSE 'Not Available' END) AS availability " +
-                 "FROM Rooms R " +
-                 "LEFT JOIN RoomBookings B ON R.hotelID = B.hotelID AND R.roomNumber = B.roomNumber " +
-                 "AND B.bookingDate = \"" + inputDate + "\" " +
-                 "WHERE R.hotelID = " + hotelID + ";";
+         String query = String.format("SELECT R.roomNumber, R.price, (CASE WHEN B.bookingID IS NULL THEN 'Available' ELSE 'Not Available' END) AS availability FROM Rooms R LEFT JOIN RoomBookings B ON R.hotelID = B.hotelID AND R.roomNumber = B.roomNumber AND B.bookingDate = '%s' WHERE R.hotelID = '%s';", inputDate, hotelID);
 
          // Execute the SQL query
          List<List<String>> result = esql.executeQueryAndReturnResult(query);
@@ -481,13 +476,13 @@ public class Hotel {
          String bookingDate = in.readLine();
 
          // Check if the room is available on the given date
-         String checkAvailabilityQuery = String.format("SELECT * FROM RoomBookings WHERE hotelID = '%s' AND roomNo = '%s' AND bookingDate = '%s'", hotelID, roomNumber, bookingDate);
+         String checkAvailabilityQuery = String.format("SELECT * FROM RoomBookings WHERE hotelID = '%s' AND roomNumber = '%s' AND bookingDate = '%s'", hotelID, roomNumber, bookingDate);
          int roomAvailability = esql.executeQuery(checkAvailabilityQuery);
 
          if (roomAvailability == 0) {
-            // Room is available, proceed with the booking
+            // Room is available
             // Fetch the room price from the Rooms table
-            String roomPriceQuery = String.format("SELECT price FROM Rooms WHERE hotelID = '%s' AND roomNo = '%s'", hotelID, roomNumber);
+            String roomPriceQuery = String.format("SELECT price FROM Rooms WHERE hotelID = '%s' AND roomNumber = '%s'", hotelID, roomNumber);
             List<List<String>> roomPriceResult = esql.executeQueryAndReturnResult(roomPriceQuery);
             String roomPrice = roomPriceResult.get(0).get(0);
 
