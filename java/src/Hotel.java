@@ -630,8 +630,50 @@ public class Hotel {
          System.err.println(e.getMessage());
       }
    }
+   public static void viewRegularCustomers(Hotel esql) {
+      try {
+         // TODO: get the managerID from the Users table
+         String managerID;
+
+         // Get the hotelID from the manager
+         System.out.print("Enter the hotel ID: ");
+         String hotelID = in.readLine();
+
+         // Check if the manager is managing the given hotel
+         String hotelQuery = String.format(
+                 "SELECT * FROM Hotel WHERE hotelID = '%s' AND managerUserID = '%s'", hotelID, managerID
+         );
+         int hotelCount = esql.executeQuery(hotelQuery);
+
+         if (hotelCount == 0) {
+            System.out.println("You do not manage this hotel.");
+            return;
+         }
+
+         // Retrieve the top 5 customers with the most bookings in the given hotel
+         String customerQuery = String.format(
+                 "SELECT U.userID, U.name, COUNT(RB.bookingID) as bookings " +
+                         "FROM Users U, RoomBookings RB " +
+                         "WHERE U.userID = RB.customerID AND RB.hotelID = '%s' " +
+                         "GROUP BY U.userID, U.name " +
+                         "ORDER BY bookings DESC LIMIT 5", hotelID
+         );
+         List<List<String>> customerResult = esql.executeQueryAndReturnResult(customerQuery);
+
+         // Display the top 5 customers
+         System.out.println("Top 5 regular customers:");
+         for (List<String> customer : customerResult) {
+            String customerID = customer.get(0);
+            String customerName = customer.get(1);
+            String bookings = customer.get(2);
+
+            System.out.println(" --> Customer ID: " + customerID + ", Customer Name: " + customerName + ", Bookings: " + bookings);
+         }
+      } catch (Exception e) {
+         System.err.println(e.getMessage());
+      }
+   }
    public static void viewRecentUpdates(Hotel esql) {}
-   public static void viewRegularCustomers(Hotel esql) {}
    public static void placeRoomRepairRequests(Hotel esql) {}
    public static void viewRoomRepairHistory(Hotel esql) {}
 
