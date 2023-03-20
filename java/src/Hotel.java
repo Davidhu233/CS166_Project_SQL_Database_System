@@ -717,13 +717,11 @@ public class Hotel {
          SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD");
          String currentDate = sdf.format(new Date());
 
-         // TODO: Here is a question that I am not sure about the repairDate is the date that the repair is made or the date that the repair is requested
-
          // Insert the repair into the RoomRepairs table
          // TODO: here can have a trigger
          String insertRepairQuery = String.format(
-                 "INSERT INTO RoomRepairs (companyID, hotelID, roomNumber) VALUES ('%s', '%s', '%s')",
-                 companyID, hotelID, roomNumber
+                 "INSERT INTO RoomRepairs (companyID, hotelID, roomNumber, repairDate) VALUES ('%s', '%s', '%s', '%s')",
+                 companyID, hotelID, roomNumber, currentDate
          );
          esql.executeUpdate(insertRepairQuery);
 
@@ -736,8 +734,6 @@ public class Hotel {
 
          // Insert the repair request into the RoomRepairRequests table
          //TODO: suggest a trigger too
-         SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD");
-         String currentDate = sdf.format(new Date());
          String insertRequestQuery = String.format(
                  "INSERT INTO RoomRepairRequests (managerID, repairID) VALUES ('%s', '%s')",
                  managerID, repairID
