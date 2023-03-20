@@ -488,6 +488,7 @@ public class Hotel {
 
             // Insert the booking into the RoomBookings table
             // Here can use a trigger to update the RoomBookings table
+            // TODO: get the customerID from the user
             String insertBookingQuery = String.format("INSERT INTO RoomBookings (customerID, hotelID, roomNumber, bookingDate) VALUES ('CUSTOMER_ID', '%s', '%s', '%s')", /* get customerID */ , hotelID, roomNumber, bookingDate);
             esql.executeUpdate(insertBookingQuery);
 
@@ -503,13 +504,13 @@ public class Hotel {
    }
    public static void updateRoomInfo(Hotel esql) {
       try {
-         // Assuming the manager's ID is already available
-         String managerID = "MANAGER_ID";
+         // TODO: get the managerID from the user
+         String managerID ;
 
-         System.out.print("\tEnter hotelID: ");
+         System.out.print("Enter hotelID: ");
          String hotelID = in.readLine();
-         System.out.print("\tEnter room number: ");
-         String roomNo = in.readLine();
+         System.out.print("Enter room number: ");
+         String roomNumber = in.readLine();
 
          // Check if the manager manages the hotel with the given hotelID
          String managerCheckQuery = String.format("SELECT * FROM Hotels WHERE hotelID = '%s' AND managerID = '%s'", hotelID, managerID);
@@ -518,38 +519,39 @@ public class Hotel {
          if (managerCheck > 0) {
             // Manager can update the room information
             // Get current room information
-            String currentInfoQuery = String.format("SELECT price, imageURL FROM Rooms WHERE hotelID = '%s' AND roomNo = '%s'", hotelID, roomNo);
+            String currentInfoQuery = String.format("SELECT price, imageURL FROM Rooms WHERE hotelID = '%s' AND roomNumber = '%s'", hotelID, roomNumber);
             List<List<String>> currentInfoResult = esql.executeQueryAndReturnResult(currentInfoQuery);
             String oldPrice = currentInfoResult.get(0).get(0);
             String oldImageURL = currentInfoResult.get(0).get(1);
 
-            // Ask for new room information
-            System.out.print("\tEnter new price: ");
+            // Get the new room information
+            System.out.print("Enter new price: ");
             String newPrice = in.readLine();
-            System.out.print("\tEnter new image URL: ");
+            System.out.print("Enter new image URL: ");
             String newImageURL = in.readLine();
 
             // Update room information in the Rooms table
-            String updateRoomQuery = String.format("UPDATE Rooms SET price = '%s', imageURL = '%s' WHERE hotelID = '%s' AND roomNo = '%s'", newPrice, newImageURL, hotelID, roomNo);
+            String updateRoomQuery = String.format("UPDATE Rooms SET price = '%s', imageURL = '%s' WHERE hotelID = '%s' AND roomNumber = '%s'", newPrice, newImageURL, hotelID, roomNumber);
             esql.executeUpdate(updateRoomQuery);
 
             // Log the update in the RoomUpdatesLog table
-            String updateLogQuery = String.format("INSERT INTO RoomUpdatesLog (hotelID, roomNo, managerID, oldPrice, newPrice, oldImageURL, newImageURL, updateTimestamp) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', NOW())", hotelID, roomNo, managerID, oldPrice, newPrice, oldImageURL, newImageURL);
+            // TODO: can use a trigger to update the RoomUpdatesLog table
+            String updateLogQuery = String.format("INSERT INTO RoomUpdatesLog (managerID, hotelID, roomNumber, updatedOn) VALUES ('%s', '%s', '%s', NOW())", managerID, hotelID, roomNumber);
             esql.executeUpdate(updateLogQuery);
 
             System.out.println("Room information updated successfully!");
 
-            // Show the last 5 recent updates of the manager's hotels
-            String recentUpdatesQuery = String.format("SELECT * FROM RoomUpdatesLog WHERE managerID = '%s' ORDER BY updateTimestamp DESC LIMIT 5", managerID);
+            // Show the last 5 recent updates
+            String recentUpdatesQuery = String.format("SELECT * FROM RoomUpdatesLog WHERE managerID = '%s' ORDER BY updatedOn DESC LIMIT 5", managerID);
             List<List<String>> recentUpdatesResult = esql.executeQueryAndReturnResult(recentUpdatesQuery);
 
-            System.out.println("\nLast 5 recent updates:");
+            System.out.println("Last 5 recent updates:");
             for (List<String> update : recentUpdatesResult) {
                System.out.println(" - " + update.toString());
             }
          } else {
             // Manager cannot update the room information
-            System.out.println("You do not manage the specified hotel and cannot update the room information.");
+            System.out.println("You do not manage the specified hotel and have no access to update the room information.");
          }
       } catch (Exception e) {
          System.err.println(e.getMessage());
