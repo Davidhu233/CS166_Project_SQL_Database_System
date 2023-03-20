@@ -734,7 +734,39 @@ public class Hotel {
          System.err.println(e.getMessage());
       }
    }
-   public static void viewRoomRepairHistory(Hotel esql) {}
+   public static void viewRoomRepairHistory(Hotel esql) {
+      try {
+         // TODO: get the managerID from the Users table
+         String managerID;
+
+         // Fetch room repair history for the hotels
+         String repairHistoryQuery = String.format(
+                 "SELECT RR.companyID, RR.hotelID, RR.roomNumber, RR.repairDate " +
+                         "FROM RoomRepairs RR " +
+                         "JOIN RoomRepairRequests RRR ON RR.repairID = RRR.repairID " +
+                         "JOIN Hotel H ON RR.hotelID = H.hotelID " +
+                         "WHERE H.managerUserID = '%s' " +
+                         "ORDER BY RR.repairDate DESC",
+                 managerID
+         );
+
+         List<List<String>> repairHistory = esql.executeQueryAndReturnResult(repairHistoryQuery);
+
+         if (repairHistory.isEmpty()) {
+            System.out.println("No room repair history found.");
+            return;
+         }
+
+         // Display the repair history
+         System.out.println("Company ID | Hotel ID | Room No. | Repair Date");
+         for (List<String> row : repairHistory) {
+            System.out.println(row.get(0) + " | " + row.get(1) + " | " + row.get(2) + " | " + row.get(3));
+         }
+
+      } catch (Exception e) {
+         System.err.println(e.getMessage());
+      }
+   }
    public static void viewRecentUpdates(Hotel esql) {}
 
 }//end Hotel
