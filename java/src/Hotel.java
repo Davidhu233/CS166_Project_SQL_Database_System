@@ -501,8 +501,61 @@ public class Hotel {
          System.err.println(e.getMessage());
       }
    }
+   public static void updateRoomInfo(Hotel esql) {
+      try {
+         // Assuming the manager's ID is already available
+         String managerID = "MANAGER_ID";
+
+         System.out.print("\tEnter hotelID: ");
+         String hotelID = in.readLine();
+         System.out.print("\tEnter room number: ");
+         String roomNo = in.readLine();
+
+         // Check if the manager manages the hotel with the given hotelID
+         String managerCheckQuery = String.format("SELECT * FROM Hotels WHERE hotelID = '%s' AND managerID = '%s'", hotelID, managerID);
+         int managerCheck = esql.executeQuery(managerCheckQuery);
+
+         if (managerCheck > 0) {
+            // Manager can update the room information
+            // Get current room information
+            String currentInfoQuery = String.format("SELECT price, imageURL FROM Rooms WHERE hotelID = '%s' AND roomNo = '%s'", hotelID, roomNo);
+            List<List<String>> currentInfoResult = esql.executeQueryAndReturnResult(currentInfoQuery);
+            String oldPrice = currentInfoResult.get(0).get(0);
+            String oldImageURL = currentInfoResult.get(0).get(1);
+
+            // Ask for new room information
+            System.out.print("\tEnter new price: ");
+            String newPrice = in.readLine();
+            System.out.print("\tEnter new image URL: ");
+            String newImageURL = in.readLine();
+
+            // Update room information in the Rooms table
+            String updateRoomQuery = String.format("UPDATE Rooms SET price = '%s', imageURL = '%s' WHERE hotelID = '%s' AND roomNo = '%s'", newPrice, newImageURL, hotelID, roomNo);
+            esql.executeUpdate(updateRoomQuery);
+
+            // Log the update in the RoomUpdatesLog table
+            String updateLogQuery = String.format("INSERT INTO RoomUpdatesLog (hotelID, roomNo, managerID, oldPrice, newPrice, oldImageURL, newImageURL, updateTimestamp) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', NOW())", hotelID, roomNo, managerID, oldPrice, newPrice, oldImageURL, newImageURL);
+            esql.executeUpdate(updateLogQuery);
+
+            System.out.println("Room information updated successfully!");
+
+            // Show the last 5 recent updates of the manager's hotels
+            String recentUpdatesQuery = String.format("SELECT * FROM RoomUpdatesLog WHERE managerID = '%s' ORDER BY updateTimestamp DESC LIMIT 5", managerID);
+            List<List<String>> recentUpdatesResult = esql.executeQueryAndReturnResult(recentUpdatesQuery);
+
+            System.out.println("\nLast 5 recent updates:");
+            for (List<String> update : recentUpdatesResult) {
+               System.out.println(" - " + update.toString());
+            }
+         } else {
+            // Manager cannot update the room information
+            System.out.println("You do not manage the specified hotel and cannot update the room information.");
+         }
+      } catch (Exception e) {
+         System.err.println(e.getMessage());
+      }
+   }
    public static void viewRecentBookingsfromCustomer(Hotel esql) {}
-   public static void updateRoomInfo(Hotel esql) {}
    public static void viewRecentUpdates(Hotel esql) {}
    public static void viewBookingHistoryofHotel(Hotel esql) {}
    public static void viewRegularCustomers(Hotel esql) {}
