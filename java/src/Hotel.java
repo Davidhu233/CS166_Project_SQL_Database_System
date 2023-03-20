@@ -673,9 +673,69 @@ public class Hotel {
          System.err.println(e.getMessage());
       }
    }
-   public static void viewRecentUpdates(Hotel esql) {}
-   public static void placeRoomRepairRequests(Hotel esql) {}
+   public static void placeRoomRepairRequests(Hotel esql) {
+      try {
+         // TODO: get the managerID from the Users table
+         String managerID;
+
+         // Get the hotelID, roomNumber, and companyID from the manager
+         System.out.print("Enter the hotel ID: ");
+         String hotelID = in.readLine();
+         System.out.print("Enter the room number: ");
+         String roomNumber = in.readLine();
+         System.out.print("Enter the company ID: ");
+         String companyID = in.readLine();
+
+         // Check if the manager is managing the given hotel
+         String hotelQuery = String.format(
+                 "SELECT * FROM Hotel WHERE hotelID = '%s' AND managerUserID = '%s'", hotelID, managerID
+         );
+         int hotelCount = esql.executeQuery(hotelQuery);
+
+         if (hotelCount == 0) {
+            System.out.println("You do not manage this hotel.");
+            return;
+         }
+
+         // Get the current date
+         SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD");
+         String currentDate = sdf.format(new Date());
+
+         // TODO: Here is a question that I am not sure about the repairDate is the date that the repair is made or the date that the repair is requested
+
+         // Insert the repair into the RoomRepairs table
+         // TODO: here can have a trigger
+         String insertRepairQuery = String.format(
+                 "INSERT INTO RoomRepairs (companyID, hotelID, roomNumber) VALUES ('%s', '%s', '%s')",
+                 companyID, hotelID, roomNumber
+         );
+         esql.executeUpdate(insertRepairQuery);
+
+         // Get the inserted repair's repairID
+         String repairIDQuery = String.format(
+                 "SELECT repairID FROM RoomRepairs WHERE companyID = '%s' AND hotelID = '%s' AND roomNumber = '%s' ORDER BY repairID DESC LIMIT 1",
+                 companyID, hotelID, roomNumber
+         );
+         String repairID = esql.executeQueryAndReturnResult(repairIDQuery).get(0).get(0);
+
+         // Insert the repair request into the RoomRepairRequests table
+         //TODO: suggest a trigger too
+         SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD");
+         String currentDate = sdf.format(new Date());
+         String insertRequestQuery = String.format(
+                 "INSERT INTO RoomRepairRequests (managerID, repairID) VALUES ('%s', '%s')",
+                 managerID, repairID
+         );
+         esql.executeUpdate(insertRequestQuery);
+
+         System.out.println("Repair request placed successfully.");
+
+      } catch (Exception e) {
+         System.err.println(e.getMessage());
+      }
+   }
    public static void viewRoomRepairHistory(Hotel esql) {}
+   public static void viewRecentUpdates(Hotel esql) {}
 
 }//end Hotel
 
