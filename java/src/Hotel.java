@@ -504,7 +504,7 @@ public class Hotel {
    }
    public static void updateRoomInfo(Hotel esql) {
       try {
-         // TODO: get the managerID from the user
+         // TODO: get the managerID from the Users table
          String managerID ;
 
          System.out.print("Enter hotelID: ");
@@ -545,9 +545,9 @@ public class Hotel {
             String recentUpdatesQuery = String.format("SELECT * FROM RoomUpdatesLog WHERE managerID = '%s' ORDER BY updatedOn DESC LIMIT 5", managerID);
             List<List<String>> recentUpdatesResult = esql.executeQueryAndReturnResult(recentUpdatesQuery);
 
-            System.out.println("Last 5 recent updates:");
+            System.out.println("******************* Last 5 recent updates: *******************");
             for (List<String> update : recentUpdatesResult) {
-               System.out.println(" - " + update.toString());
+               System.out.println(" --> " + update.toString());
             }
          } else {
             // Manager cannot update the room information
@@ -568,7 +568,7 @@ public class Hotel {
          List<List<String>> bookingHistoryResult = esql.executeQueryAndReturnResult(bookingHistoryQuery);
 
          // Display the booking history
-         System.out.println("Your last 5 recent bookings:");
+         System.out.println("**************** Your last 5 recent bookings: ****************");
          for (List<String> booking : bookingHistoryResult) {
             String hotelID = booking.get(0);
             String roomNumber = booking.get(1);
@@ -581,7 +581,55 @@ public class Hotel {
          System.err.println(e.getMessage());
       }
    }
-   public static void viewRecentBookingsfromCustomer(Hotel esql) {}
+   public static void viewRecentBookingsfromCustomer(Hotel esql) {
+      try {
+         // TODO: get the managerID from the Users table
+         String managerID;
+
+         // Get the range of dates from the manager
+         //TODO: this todo part can be change into a while loop
+         System.out.print("Enter the start date (YYYY-MM-DD): ");
+         String beginDate = in.readLine();
+         System.out.print("Enter the end date (YYYY-MM-DD): ");
+         String endDate = in.readLine();
+
+         // check the date input
+         SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD");
+         dateFormat.setLenient(false);
+
+         try {
+            Date begin = dateFormat.parse(beginDate);
+            Date end = dateFormat.parse(endDate);
+         } catch (Exception e) {
+            System.err.println("Invalid date format.");
+            return;
+         }
+         //TODO
+
+         // Retrieve the booking information from the RoomBookings table within the date range
+         String bookingQuery = String.format(
+                 "SELECT RB.bookingID, U.name, RB.hotelID, RB.roomNumber, RB.bookingDate " +
+                         "FROM RoomBookings RB, Users U, Hotel H " +
+                         "WHERE RB.customerID = U.userID AND RB.hotelID = H.hotelID AND H.managerUserID = '%s' AND RB.bookingDate BETWEEN '%s' AND '%s' " +
+                         "ORDER BY RB.bookingDate", managerID, beginDate, endDate
+         );
+         List<List<String>> bookingResult = esql.executeQueryAndReturnResult(bookingQuery);
+
+         // Display the booking information
+         System.out.println("**************** Booking information: ****************");
+         for (List<String> booking : bookingResult) {
+            String bookingID = booking.get(0);
+            String customerName = booking.get(1);
+            String hotelID = booking.get(2);
+            String roomNumber = booking.get(3);
+            String bookingDate = booking.get(4);
+
+            System.out.println(" --> Booking ID: " + bookingID + ", Customer Name: " + customerName + ", Hotel ID: " + hotelID + ", Room Number: " + roomNumber + ", Booking Date: " + bookingDate);
+         }
+      } catch (Exception e) {
+         System.err.println(e.getMessage());
+      }
+   }
    public static void viewRecentUpdates(Hotel esql) {}
    public static void viewRegularCustomers(Hotel esql) {}
    public static void placeRoomRepairRequests(Hotel esql) {}
