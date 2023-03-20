@@ -405,6 +405,10 @@ public class Hotel {
    // Rest of the functions definition go in here
    //*********************************************
 
+   // TODO: All function implement, rest is to debug
+   //  as I input some string variables which should be int
+   //  need a string to int translation
+
    public static void viewHotels(Hotel esql) {
       try {
          // Get user input
