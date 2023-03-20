@@ -401,7 +401,9 @@ public class Hotel {
       }
    }//end
 
-// Rest of the functions definition go in here
+   //*********************************************
+   // Rest of the functions definition go in here
+   //*********************************************
 
    public static void viewHotels(Hotel esql) {
       try {
