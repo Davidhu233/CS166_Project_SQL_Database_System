@@ -557,9 +557,32 @@ public class Hotel {
          System.err.println(e.getMessage());
       }
    }
+   public static void viewBookingHistoryofHotel(Hotel esql) {
+      try {
+         // TODO: get the customerID from the Users table
+         String customerID ;
+
+         // Retrieve the last 5 recent bookings of the customer from the RoomBookings table
+         // TODO: check this query cause I am not sure if it is correct
+         String bookingHistoryQuery = String.format("SELECT RB.hotelID, RB.roomNumber, R.price, RB.bookingDate FROM RoomBookings RB, Rooms R WHERE RB.hotelID = R.hotelID AND RB.roomNumber = R.roomNumber AND customerID = '%s' ORDER BY bookingDate DESC LIMIT 5", customerID);
+         List<List<String>> bookingHistoryResult = esql.executeQueryAndReturnResult(bookingHistoryQuery);
+
+         // Display the booking history
+         System.out.println("Your last 5 recent bookings:");
+         for (List<String> booking : bookingHistoryResult) {
+            String hotelID = booking.get(0);
+            String roomNumber = booking.get(1);
+            String billingInfo = booking.get(2);
+            String bookingDate = booking.get(3);
+
+            System.out.println(" --> Hotel ID: " + hotelID + ", Room Number: " + roomNumber + ", Billing information: " + billingInfo + ", Booking Date: " + bookingDate);
+         }
+      } catch (Exception e) {
+         System.err.println(e.getMessage());
+      }
+   }
    public static void viewRecentBookingsfromCustomer(Hotel esql) {}
    public static void viewRecentUpdates(Hotel esql) {}
-   public static void viewBookingHistoryofHotel(Hotel esql) {}
    public static void viewRegularCustomers(Hotel esql) {}
    public static void placeRoomRepairRequests(Hotel esql) {}
    public static void viewRoomRepairHistory(Hotel esql) {}
