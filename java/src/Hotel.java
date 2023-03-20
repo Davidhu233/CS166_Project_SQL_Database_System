@@ -489,7 +489,7 @@ public class Hotel {
             String roomPrice = roomPriceResult.get(0).get(0);
 
             // Insert the booking into the RoomBookings table
-            // Here can use a trigger to update the RoomBookings table
+            // TODO: Here can use a trigger to update the RoomBookings table
             // TODO: get the customerID from the user
             String insertBookingQuery = String.format("INSERT INTO RoomBookings (customerID, hotelID, roomNumber, bookingDate) VALUES ('CUSTOMER_ID', '%s', '%s', '%s')", /* get customerID */ , hotelID, roomNumber, bookingDate);
             esql.executeUpdate(insertBookingQuery);
@@ -543,18 +543,32 @@ public class Hotel {
 
             System.out.println("Room information updated successfully!");
 
-            // Show the last 5 recent updates
-            String recentUpdatesQuery = String.format("SELECT * FROM RoomUpdatesLog WHERE managerID = '%s' ORDER BY updatedOn DESC LIMIT 5", managerID);
-            List<List<String>> recentUpdatesResult = esql.executeQueryAndReturnResult(recentUpdatesQuery);
+      } catch (Exception e) {
+         System.err.println(e.getMessage());
+      }
+   }
+   public static void viewRecentUpdates(Hotel esql) {
+      try {
+         // TODO: get the managerID from the Users table
+         String managerID;
 
-            System.out.println("******************* Last 5 recent updates: *******************");
-            for (List<String> update : recentUpdatesResult) {
-               System.out.println(" --> " + update.toString());
-            }
-         } else {
-            // Manager cannot update the room information
-            System.out.println("You do not manage the specified hotel and have no access to update the room information.");
+         // Fetch the last 5 recent updates for the hotel
+         String recentUpdatesQuery = String.format("SELECT * FROM RoomUpdatesLog WHERE managerID = '%s' ORDER BY updatedOn DESC LIMIT 5", managerID);
+         List<List<String>> recentUpdates = esql.executeQueryAndReturnResult(recentUpdatesQuery);
+
+         if (recentUpdates.isEmpty()) {
+            System.out.println("No recent updates found.");
+            return;
          }
+
+         System.out.println("Update No. | Manager ID | Hotel ID | Room No. | Update Date");
+         for (List<String> row : recentUpdates) {
+            System.out.println(
+                    row.get(0) + " | " + row.get(1) + " | " + row.get(2) + " | " +
+                            row.get(3) + " | " + row.get(4)
+            );
+         }
+
       } catch (Exception e) {
          System.err.println(e.getMessage());
       }
@@ -769,7 +783,6 @@ public class Hotel {
          System.err.println(e.getMessage());
       }
    }
-   public static void viewRecentUpdates(Hotel esql) {}
 
 }//end Hotel
 
