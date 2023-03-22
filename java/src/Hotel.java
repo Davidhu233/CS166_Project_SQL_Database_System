@@ -448,7 +448,7 @@ public class Hotel {
             System.out.print("\tEnter password: ");
             String password = in.readLine();
             String type = "Customer";
-            //TODO: trigger here
+            // Trigger here
             String query = String.format("INSERT INTO USERS (name, password, userType) VALUES ('%s','%s', '%s')", name, password, type);
             esql.executeUpdate(query);
             System.out.println("User successfully created with userID = " + esql.getNewUserID("SELECT last_value FROM users_userID_seq"));
@@ -484,9 +484,6 @@ public class Hotel {
     //*********************************************
     // Rest of the functions definition go in here
     //*********************************************
-
-    // TODO: Need to debug as I input some string variables which should be int
-    //  Need a string to int translation
 
     public static void viewHotels(Hotel esql) {
         try {
@@ -541,9 +538,9 @@ public class Hotel {
             // Use CASE WHEN to check if the room is available on the given date, it works like an if eles statement
             String query = String.format(
                     "SELECT R.roomNumber, R.price, " +
-                            "(CASE WHEN B.bookingID IS NULL THEN 'Available' ELSE 'Not Available' END) AS availability " +
+                            "(CASE WHEN RB.bookingID IS NULL THEN 'Available' ELSE 'Not Available' END) AS availability " +
                             "FROM Rooms R " +
-                            "LEFT JOIN RoomBookings B ON R.hotelID = B.hotelID AND R.roomNumber = B.roomNumber AND B.bookingDate = '%s' " +
+                            "LEFT JOIN RoomBookings RB ON R.hotelID = RB.hotelID AND R.roomNumber = RB.roomNumber AND RB.bookingDate = '%s' " +
                             "WHERE R.hotelID = %d",
                     inputDate, hotelID
             );
@@ -597,7 +594,7 @@ public class Hotel {
                 String roomPrice = roomPriceResult.get(0).get(0);
 
                 // Insert the booking into the RoomBookings table
-                // TODO: Here can use a trigger to update the RoomBookings table
+                // Trigger here
                 String insertBookingQuery = String.format(
                         "INSERT INTO RoomBookings (customerID, hotelID, roomNumber, bookingDate) " +
                                 "VALUES (%d, %d, %d, '%s')",
@@ -659,7 +656,7 @@ public class Hotel {
                 esql.executeUpdate(updateRoomQuery);
 
                 // Log the update in the RoomUpdatesLog table
-                // TODO: can use a trigger to update the RoomUpdatesLog table
+                // Trigger here
                 String updateLogQuery = String.format(
                         "INSERT INTO RoomUpdatesLog (managerID, hotelID, roomNumber, updatedOn) " +
                                 "VALUES (%d, %d, %d, 'NOW()')",
@@ -715,8 +712,8 @@ public class Hotel {
             String bookingHistoryQuery = String.format(
                     "SELECT RB.hotelID, RB.roomNumber, R.price, RB.bookingDate " +
                             "FROM RoomBookings RB, Rooms R " +
-                            "WHERE RB.hotelID = R.hotelID AND RB.roomNumber = R.roomNumber AND customerID = %d " +
-                            "ORDER BY bookingDate DESC LIMIT 5",
+                            "WHERE RB.hotelID = R.hotelID AND RB.roomNumber = R.roomNumber AND RB.customerID = %d " +
+                            "ORDER BY RB.bookingDate DESC LIMIT 5",
                     customerID
             );
             List<List<String>> bookingHistoryResult = esql.executeQueryAndReturnResult(bookingHistoryQuery);
@@ -873,7 +870,7 @@ public class Hotel {
             String currentDate = sdf.format(new Date());
 
             // Insert the repair into the RoomRepairs table
-            // TODO: here can have a trigger
+            // Trigger here
             String insertRepairQuery = String.format(
                     "INSERT INTO RoomRepairs (companyID, hotelID, roomNumber, repairDate) VALUES (%d, %d, %d, '%s')",
                     companyID, hotelID, roomNumber, currentDate
@@ -888,7 +885,7 @@ public class Hotel {
             int repairID = Integer.parseInt(esql.executeQueryAndReturnResult(repairIDQuery).get(0).get(0));
 
             // Insert the repair request into the RoomRepairRequests table
-            //TODO: suggest a trigger too
+            //Trigger here
             String insertRequestQuery = String.format(
                     "INSERT INTO RoomRepairRequests (managerID, repairID) VALUES (%d, %d)",
                     managerID, repairID
@@ -967,4 +964,3 @@ public class Hotel {
     }
 
 }//end Hotel
-
