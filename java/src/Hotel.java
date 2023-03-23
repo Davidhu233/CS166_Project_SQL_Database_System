@@ -483,9 +483,9 @@ public class Hotel {
         try {
             // Get user input
             System.out.print("\tEnter latitude: ");
-            double latitude = Double.parseDouble(in.readLine());
+            double latitude = checkDouble();
             System.out.print("\tEnter longitude: ");
-            double longitude = Double.parseDouble(in.readLine());
+            double longitude = checkDouble();
 
             // SQL query to select hotels within 30 units of distance
             String query = String.format(
@@ -513,7 +513,7 @@ public class Hotel {
         try {
             // Get user input
             System.out.print("\tEnter hotel ID: ");
-            int hotelID = readInput();
+            int hotelID = checkInt();
             System.out.print("\tEnter date (YYYY-MM-DD): ");
             String inputDate = in.readLine();
 
@@ -563,9 +563,9 @@ public class Hotel {
 
             // get user input
             System.out.print("\tEnter hotelID: ");
-            int hotelID = readInput();
+            int hotelID = checkInt();
             System.out.print("\tEnter room number: ");
-            int roomNumber = readInput();
+            int roomNumber = checkInt();
             System.out.print("\tEnter booking date (YYYY-MM-DD): ");
             String bookingDate = in.readLine();
 
@@ -613,9 +613,9 @@ public class Hotel {
             int managerID = Integer.parseInt(userID);
 
             System.out.print("\tEnter hotelID: ");
-            int hotelID = readInput();
+            int hotelID = checkInt();
             System.out.print("\tEnter room number: ");
-            int roomNumber = readInput();
+            int roomNumber = checkInt();
 
             // Check if the manager manages the hotel with the given hotelID
             String managerCheckQuery = String.format(
@@ -638,7 +638,7 @@ public class Hotel {
 
                 // Get the new room information
                 System.out.print("\tEnter new price: ");
-                int newPrice = readInput();
+                int newPrice = checkInt();
                 System.out.print("\tEnter new image URL: ");
                 String newImageURL = in.readLine();
 
@@ -791,7 +791,7 @@ public class Hotel {
 
             // Get the hotelID from the manager
             System.out.print("\tEnter the hotel ID: ");
-            int hotelID = readInput();
+            int hotelID = checkInt();
 
             // Check if the manager is managing the given hotel
             String hotelQuery = String.format(
@@ -841,11 +841,11 @@ public class Hotel {
 
             // Get the hotelID, roomNumber, and companyID from the manager
             System.out.print("\tEnter the hotel ID: ");
-            int hotelID = readInput();
+            int hotelID = checkInt();
             System.out.print("\tEnter the room number: ");
-            int roomNumber = readInput();
+            int roomNumber = checkInt();
             System.out.print("\tEnter the company ID: ");
-            int companyID = readInput();
+            int companyID = checkInt();
 
             // Check if the manager is managing the given hotel
             String hotelQuery = String.format(
@@ -930,7 +930,7 @@ public class Hotel {
     /*
      *  Read the input from keyboard and check if the input contains integer 0 to 9 only
      * */
-    public static int readInput() {
+    public static int checkInt() {
         int intInput = 0;
         try {
             String input;
@@ -957,6 +957,33 @@ public class Hotel {
         return intInput;
     }
 /*
-* Read the input from keyboard and check if the input contains double 0 to 9 only
+* Read the input from keyboard and check if the input contains double integers only
 * */
+    public static double checkDouble() {
+        double doubleInput = 0.0;
+        try {
+            String input;
+            boolean valid = false;
+            do {
+                input = in.readLine();
+                if (input.length() == 0) {
+                    System.out.println("No input. Please enter again!");
+                    valid = true;
+                    continue;
+                }
+                for (int i = 0; i < input.length(); i++) {
+                    if (input.charAt(i) < '0' || input.charAt(i) > '9') {
+                        System.out.println("Invalid input. Please enter again!");
+                        valid = true;
+                        break;
+                    }
+                }
+            } while (valid);
+            doubleInput = Double.parseDouble(input);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+        return doubleInput;
+    }
+
 }//end Hotel
