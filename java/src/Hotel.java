@@ -33,12 +33,6 @@ import java.util.Date;
  * work with PostgreSQL JDBC drivers.
  */
 public class Hotel {
-    /*
-    // cls comment
-    Runtime rt = Runtime.getRuntime();
-    Process p = rt.exec("cmd.exe /c cls");
-    System.out.println(p.toString());
-     */
 
     // reference to physical database connection.
     private Connection _connection = null;
@@ -962,5 +956,7 @@ public class Hotel {
         }
         return intInput;
     }
-
+/*
+* Read the input from keyboard and check if the input contains double 0 to 9 only
+* */
 }//end Hotel
