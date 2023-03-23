@@ -330,24 +330,23 @@ public class Hotel {
                         while (usermenu) {
                             System.out.println("                  MAIN MENU                   ");
                             System.out.println("----------------------------------------------");
-                            /*System.out.println("1. View Hotels within 30 units");
+                            System.out.println("1. View Hotels within 30 units");
                             System.out.println("2. View Rooms");
                             System.out.println("3. Book a Room");
                             System.out.println("4. View recent booking history");
-                            System.out.println("----------------------------------------------");
-                            */
+
                             //the following functionalities basically used by managers
-                            System.out.println("1. Update Room Information");
-                            System.out.println("2. View 5 recent Room Updates Info");
-                            System.out.println("3. View booking history of the hotel");
-                            System.out.println("4. View 5 regular Customers");
-                            System.out.println("5. Place room repair Request to a company");
-                            System.out.println("6. View room repair Requests history");
+                            System.out.println("5. Update Room Information");
+                            System.out.println("6. View 5 recent Room Updates Info");
+                            System.out.println("7. View booking history of the hotel");
+                            System.out.println("8. View 5 regular Customers");
+                            System.out.println("9. Place room repair Request to a company");
+                            System.out.println("10. View room repair Requests history");
 
                             System.out.println("----------------------------------------------");
                             System.out.println("20. Log out");
                             switch (readChoice()) {
-                                /*case 1:
+                                case 1:
                                     viewHotels(esql);
                                     break;
                                 case 2:
@@ -359,23 +358,23 @@ public class Hotel {
                                     //this is for customer
                                 case 4:
                                     viewRecentBookingsfromCustomer(esql, authorisedUser);
-                                    break;*/
-                                case 1:
-                                    updateRoomInfo(esql, authorisedUser);
-                                    break;
-                                case 2:
-                                    viewRecentUpdates(esql, authorisedUser);
-                                    break;
-                                case 3:
-                                    viewBookingHistoryofHotel(esql);
-                                    break;
-                                case 4:
-                                    viewRegularCustomers(esql, authorisedUser);
                                     break;
                                 case 5:
-                                    placeRoomRepairRequests(esql, authorisedUser);
+                                    updateRoomInfo(esql, authorisedUser);
                                     break;
                                 case 6:
+                                    viewRecentUpdates(esql, authorisedUser);
+                                    break;
+                                case 7:
+                                    viewBookingHistoryofHotel(esql);
+                                    break;
+                                case 8:
+                                    viewRegularCustomers(esql, authorisedUser);
+                                    break;
+                                case 9:
+                                    placeRoomRepairRequests(esql, authorisedUser);
+                                    break;
+                                case 10:
                                     viewRoomRepairHistory(esql, authorisedUser);
                                     break;
                                 case 20:
@@ -483,9 +482,9 @@ public class Hotel {
         try {
             // Get user input
             System.out.print("\tEnter latitude: ");
-            double latitude = checkDouble();
+            double latitude = Double.parseDouble(in.readLine());
             System.out.print("\tEnter longitude: ");
-            double longitude = checkDouble();
+            double longitude = Double.parseDouble(in.readLine());
 
             // SQL query to select hotels within 30 units of distance
             String query = String.format(
@@ -514,17 +513,17 @@ public class Hotel {
             // Get user input
             System.out.print("\tEnter hotel ID: ");
             int hotelID = checkInt();
-            System.out.print("\tEnter date (YYYY-MM-DD): ");
+            System.out.print("\tEnter date (MM-dd-yyyy): ");
             String inputDate = in.readLine();
 
             // Check the date format
-            SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
             dateFormat.setLenient(false);
             Date date;
             try {
                 date = dateFormat.parse(inputDate);
             } catch (ParseException e) {
-                System.err.println("Invalid date format! Please enter as 'YYYY-MM-DD'.");
+                System.err.println("Invalid date format! Please enter as 'MM-dd-yyyy'.");
                 return;
             }
 
@@ -566,7 +565,7 @@ public class Hotel {
             int hotelID = checkInt();
             System.out.print("\tEnter room number: ");
             int roomNumber = checkInt();
-            System.out.print("\tEnter booking date (YYYY-MM-DD): ");
+            System.out.print("\tEnter booking date (MM-dd-yyyy): ");
             String bookingDate = in.readLine();
 
             // Check if the room is available on the given date
@@ -619,7 +618,7 @@ public class Hotel {
 
             // Check if the manager manages the hotel with the given hotelID
             String managerCheckQuery = String.format(
-                    "SELECT * FROM Hotels WHERE hotelID = %d AND managerID = %d",
+                    "SELECT * FROM Hotel WHERE hotelID = %d AND managerUserID = %d",
                     hotelID, managerID
             );
             int managerCheck = esql.executeQuery(managerCheckQuery);
@@ -735,13 +734,13 @@ public class Hotel {
     public static void viewBookingHistoryofHotel(Hotel esql) {
         try {
             // Get the range of dates from the manager
-            System.out.print("\tEnter the start date (YYYY-MM-DD): ");
+            System.out.print("\tEnter the start date (MM-dd-yyyy): ");
             String beginDate = in.readLine();
-            System.out.print("\tEnter the end date (YYYY-MM-DD): ");
+            System.out.print("\tEnter the end date (MM-dd-yyyy): ");
             String endDate = in.readLine();
 
             // check the date input
-            SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
             dateFormat.setLenient(false);
 
             try {
@@ -860,7 +859,7 @@ public class Hotel {
             }
 
             // Get the current date
-            SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD");
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
             String currentDate = sdf.format(new Date());
 
             // Insert the repair into the RoomRepairs table
@@ -955,35 +954,6 @@ public class Hotel {
             System.err.println(e.getMessage());
         }
         return intInput;
-    }
-/*
-* Read the input from keyboard and check if the input contains double integers only
-* */
-    public static double checkDouble() {
-        double doubleInput = 0.0;
-        try {
-            String input;
-            boolean valid = false;
-            do {
-                input = in.readLine();
-                if (input.length() == 0) {
-                    System.out.println("No input. Please enter again!");
-                    valid = true;
-                    continue;
-                }
-                for (int i = 0; i < input.length(); i++) {
-                    if (input.charAt(i) < '0' || input.charAt(i) > '9') {
-                        System.out.println("Invalid input. Please enter again!");
-                        valid = true;
-                        break;
-                    }
-                }
-            } while (valid);
-            doubleInput = Double.parseDouble(input);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-        return doubleInput;
     }
 
 }//end Hotel
