@@ -1,5 +1,5 @@
 # CS166_Project_SQL_Database_System
-CS166 project pahse3 "SQL database system using Java"
+CS166 project "SQL database system using Java"
 
 ## Introduction
   In this phase you are provided a package including the SQL schema, datasets, and a template user interface in Java. The datasets consist of data records that should be loaded into your database system. The template user interface in Java shows you how to connect to the PostgreSQL database and how to execute SQL queries.  
